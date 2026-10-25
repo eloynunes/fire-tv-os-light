@@ -174,6 +174,10 @@ class SettingsActivity : Activity() {
         add(list, toggle(getString(R.string.set_aggressive), getString(R.string.set_aggressive_sub), repo.store.aggressiveFree) {
             repo.store.aggressiveFree = it
         })
+        // Status do root (GhostLock/Magisk): informativo. Com root, o Prime Video é encerrado de verdade.
+        val rootRow = row(getString(R.string.set_root), value = getString(R.string.set_root_checking), subtitle = getString(R.string.set_root_sub)) { }
+        add(list, rootRow)
+        RootShell.check { ok -> main.post { rootRow.setValue(getString(if (ok) R.string.set_root_on else R.string.set_root_off)) } }
     }
 
     private fun appsPanel() = Panel(getString(R.string.set_apps)) { list ->

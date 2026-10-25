@@ -42,6 +42,11 @@
     <string name="set_autofree_sub">Encerra Prime/Netflix em 2º plano ao voltar</string>
     <string name="set_aggressive">Modo agressivo</string>
     <string name="set_aggressive_sub">Encerra todos em 2º plano (menos música)</string>
+    <string name="set_root">Root (GhostLock)</string>
+    <string name="set_root_sub">Com root, encerra o Prime Video e fixa o Home de verdade</string>
+    <string name="set_root_checking">Verificando…</string>
+    <string name="set_root_on">Disponível — otimizações avançadas ativas</string>
+    <string name="set_root_off">Não detectado</string>
     <string name="set_unhide">Restaurar apps ocultos</string>
     <string name="set_reset_order">Redefinir ordem dos apps</string>
     <string name="set_about">Sobre</string>

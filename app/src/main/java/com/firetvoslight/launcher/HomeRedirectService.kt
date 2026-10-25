@@ -45,6 +45,11 @@ class HomeRedirectService : AccessibilityService(), LauncherScreen.Host {
         instance = this
         LauncherRepo.init(this)
         LauncherRepo.store.homeLockDesired = true
+        // Com root (ex.: após GhostLock/Magisk): tenta fixar o TV Light como Home de verdade, pelo caminho
+        // padrão do Android. Se o Fire OS ainda ignorar, a cortina abaixo continua cobrindo o Home da Amazon.
+        // Dormente sem root. O método definitivo de trava de Home deve ser confirmado com o guia do GhostLock.
+        val pkg = packageName
+        RootShell.run("cmd package set-home-activity $pkg/$pkg.MainActivity")
         // Monta a cortina com antecedência para o primeiro Home já ser instantâneo.
         main.postDelayed({ ensureCurtain() }, 2000)
     }

@@ -40,6 +40,10 @@ class MemoryManager(private val ctx: Context) {
                 Log.w("TVLight", "kill $p", t)
             }
         }
+        // Com root (ex.: após GhostLock/Magisk): o Prime Video fica fixado em adj=700 e killBackgroundProcesses
+        // não o alcança. Um "am force-stop" como root encerra de verdade e libera ~185 MB. Dormente sem root.
+        val rootKill = kill.filter { it in MemoryPolicy.DEFAULT_HOGS }
+        if (rootKill.isNotEmpty()) RootShell.run(*rootKill.map { "am force-stop $it" }.toTypedArray())
         if (n > 0) Log.i("TVLight", "mem sweep: encerrados=$n [${kill.joinToString(",")}] aggressive=$aggressive")
         return n
     }
