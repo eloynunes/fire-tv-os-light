@@ -1,0 +1,7 @@
+build/
+.gradle/
+local.properties
+testing/results/
+*.apk
+.DS_Store
+scripts/mac-agent/*.log

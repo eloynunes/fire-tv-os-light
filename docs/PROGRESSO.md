@@ -1,0 +1,15 @@
+# Progresso
+- [x] Mac: arm64, macOS 26.6.2; JDK17, Gradle, SDK 34, ADB via Homebrew.
+- [x] ADB: só funciona com o Mac no CABO (UniFi isola clientes Wi-Fi). Chave autorizada na TV.
+- [x] Diagnóstico real coletado (docs/DIAGNOSTICO.md).
+- [x] Launcher instalado e testado no aparelho: sem crash/ANR, 41 apps, persistência OK, estado restaurado pelo teste.
+- [x] Otimização: banners reduzidos + cache em disco, lista de apps em cache, zoom com camada de hardware.
+- [x] Escalas de animação 1.0 → 0.5 (autorizado; anteriores em testing/results/animation-before.txt).
+- [x] Botão Home → TV Light via serviço de acessibilidade + cortina (`./scripts/home-lock.sh on|off`). Desativar Home Amazon: bloqueado pelo Fire OS.
+- [x] Cortina validada com o controle real (usuário). Home → TV Light ~4,5 s (limite do sistema).
+- [x] Reinício testado: tudo se mantém.
+- [x] Restrição de segundo plano em 23 apps (`background-limits.sh`, revert disponível).
+- [x] `free-memory.sh`: encerra Prime/Netflix em segundo plano (+~80–170 MB) até o próximo reinício.
+- [ ] Fixar o TV Light na fileira da Home da Amazon (feito pelo usuário no controle).
+- [x] Apple TV Settings (SettingsActivity) + limpeza de armazenamento (desinstalou 19 apps, +1,1 GB; cache -626 MB).
+- [x] Home enxuta: só streamings + Appstore; entulho Amazon oculto. Ícone novo.

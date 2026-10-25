@@ -1,0 +1,13 @@
+# DADOS FICTÍCIOS para testes (não é diagnóstico do aparelho). package<TAB>activity<TAB>label
+com.netflix.ninja	com.netflix.ninja.MainActivity	Netflix
+com.amazon.firebat	com.amazon.firebat.Main	Prime Video
+com.amazon.avod	com.amazon.avod.Launcher	Prime Video (legado)
+com.amazon.firetv.youtube	dev.cobalt.app.MainActivity	YouTube
+com.globo.globotv	com.globo.globotv.Splash	Globoplay
+com.disney.disneyplus	com.disney.Main	Disney+
+com.spotify.tv.android	com.spotify.tv.Main	Spotify
+org.videolan.vlc	org.videolan.vlc.StartActivity	VLC
+com.amazon.tv.settings.v2	com.amazon.Settings	Configurações
+com.example.zeta	com.example.zeta.Main	zeta
+com.example.alpha	com.example.alpha.Main	Álbum
+com.example.beta	com.example.beta.Main	beta
