@@ -50,19 +50,21 @@ case "$CMD" in
     while read -r p; do printf '%-40s %s\n' "$p" "$(state_of "$p")"; done < <(packages)
     ;;
   on)
-    : > "$APPLIED"; n=0
+    # Acumula no registro (dedup): rodar "on" e depois "on --aggressive" soma, não zera.
+    mkdir -p "$(dirname "$APPLIED")"; touch "$APPLIED"; n=0
     while read -r p; do
       case "$(state_of "$p")" in
         enabled)
           if adbd shell pm disable-user --user 0 "$p" </dev/null >/dev/null 2>&1; then
-            echo "$p" >> "$APPLIED"; echo "desativado: $p"; n=$((n+1))
+            grep -qx "$p" "$APPLIED" || echo "$p" >> "$APPLIED"
+            echo "desativado: $p"; n=$((n+1))
           else
             echo "FALHOU (protegido?): $p"
           fi ;;
         *) echo "ignorado ($(state_of "$p")): $p" ;;
       esac
     done < <(packages)
-    echo "---"; echo "$n pacote(s) desativado(s). Registro: $APPLIED"
+    echo "---"; echo "$n pacote(s) desativado(s) nesta execução. Registro: $APPLIED"
     ;;
   off)
     if [[ ! -s "$APPLIED" ]]; then echo "Nada registrado como desativado por este script."; exit 0; fi
