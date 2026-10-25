@@ -1,0 +1,35 @@
+# Lista de debloat para o Fire TV Stick HD (AFTSS / codename "sheldon", Fire OS 7.7.1.7).
+#
+# Cada pacote aqui é DESATIVADO via "pm disable-user" (reversível com "pm enable"),
+# sem root e sem desinstalar nada. O estado original é gravado antes de aplicar, e
+# "debloat.sh off" restaura. Linhas começando com # são comentários/ignoradas.
+#
+# Seções: [safe] é aplicada por padrão; [aggressive] só com a flag --aggressive.
+# Propositalmente NÃO incluídos (quebram o sistema): com.amazon.dcp* (conta/conteúdo),
+# com.amazon.client.metrics.api (lib de framework), com.android.providers.downloads*
+# (baixa atualizações/apps), com.amazon.kindleautomatictimezone (fuso automático),
+# com.amazon.tv.launcher (protegido — não desativa mesmo).
+
+[safe]
+com.amazon.device.metrics            # Coletor de métricas de uso
+com.amazon.device.logmanager         # Envio de logs/telemetria
+com.amazon.tv.fw.metrics             # Métricas do framework da TV
+com.amazon.wirelessmetrics.service   # Métricas de rede/Wi-Fi
+com.amazon.ftvads.deeplinking        # Deep links de anúncios do Fire TV
+com.amazon.bueller.photos            # Amazon Photos (não usado)
+com.amazon.gamehub                   # Game Center (não usado)
+com.amazon.hedwig                    # Notícias (não usado)
+com.amazon.minitv.android.app        # miniTV (não usado)
+com.amazon.shoptv.client             # Live Shopping (não usado)
+com.amazon.shoptv.firetv.client      # Live Shopping (não usado)
+com.amazon.vizzini                   # "What Should I Watch" (não usado)
+com.amazon.vizzini.ftvcds            # "What Should I Watch" (stub)
+com.amazon.tahoe                     # Amazon Kids (não usado)
+
+[aggressive]
+# Mais invasivo: desliga o transporte de telemetria push da Amazon (tcomm) e o
+# monitor de estado. Costuma ser seguro no sheldon, mas se notar algo estranho
+# (ex.: demora em sincronizar), rode "debloat.sh off" e tire estes.
+com.amazon.tcomm                     # Transporte de comunicação/telemetria
+com.amazon.tcomm.client              # Cliente do tcomm
+com.amazon.spiderpork                # Monitor de estado do sistema
