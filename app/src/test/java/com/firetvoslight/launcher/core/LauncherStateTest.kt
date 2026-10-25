@@ -219,8 +219,15 @@ class MemoryPolicyTest {
     private val third = setOf("com.netflix.ninja", "com.spotify.tv.android", "org.videolan.vlc")
 
     @Test fun defaultKillsOnlyRunningHogs() {
+        // Netflix agora está em NEVER (mantido quente), então só o hog Prime (firebat) entra.
         val k = MemoryPolicy.toKill(MemoryPolicy.DEFAULT_HOGS, false, running, null, "com.firetvoslight.launcher", third)
-        assertEquals(listOf("com.amazon.firebat", "com.netflix.ninja"), k)
+        assertEquals(listOf("com.amazon.firebat"), k)
+    }
+
+    @Test fun keepsUserStreamingAppsWarm() {
+        // Mesmo no modo agressivo, os apps de streaming do usuário nunca são encerrados.
+        val k = MemoryPolicy.toKill(MemoryPolicy.DEFAULT_HOGS, true, running, null, "com.firetvoslight.launcher", third)
+        assertFalse("com.netflix.ninja" in k)
     }
 
     @Test fun neverKillsSpotifyOrLauncherOrSystem() {
@@ -232,8 +239,8 @@ class MemoryPolicyTest {
 
     @Test fun aggressiveKillsThirdPartyPlusKnownHogsExceptExceptions() {
         val k = MemoryPolicy.toKill(MemoryPolicy.DEFAULT_HOGS, true, running, null, "com.firetvoslight.launcher", third)
-        // firebat (hog do fabricante) e netflix e vlc; Spotify e systemui preservados.
-        assertEquals(listOf("com.amazon.firebat", "com.netflix.ninja", "org.videolan.vlc"), k)
+        // firebat (hog do fabricante) e vlc; Spotify, Netflix e systemui preservados.
+        assertEquals(listOf("com.amazon.firebat", "org.videolan.vlc"), k)
     }
 
     @Test fun foregroundAppIsNeverKilled() {
@@ -242,8 +249,9 @@ class MemoryPolicyTest {
     }
 
     @Test fun doesNotKillAppsThatAreNotRunning() {
-        val k = MemoryPolicy.toKill(MemoryPolicy.DEFAULT_HOGS, false, setOf("com.netflix.ninja"), null, "x", third)
-        assertEquals(listOf("com.netflix.ninja"), k)
+        // Só firebat está rodando; avod é hog mas não roda, então fica de fora.
+        val k = MemoryPolicy.toKill(MemoryPolicy.DEFAULT_HOGS, false, setOf("com.amazon.firebat"), null, "x", third)
+        assertEquals(listOf("com.amazon.firebat"), k)
     }
 
     @Test fun systemPrefixesRecognized() {

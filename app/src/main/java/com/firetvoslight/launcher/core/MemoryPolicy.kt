@@ -5,18 +5,33 @@ package com.firetvoslight.launcher.core
  * Nunca entra nesta lista: o próprio launcher, apps de áudio (tocam em 2º plano) e pacotes essenciais do sistema.
  */
 object MemoryPolicy {
-    /** Apps que a Amazon costuma manter vivos consumindo muita RAM, encerrados por padrão ao voltar ao launcher. */
+    /**
+     * Apps que a Amazon mantém vivos consumindo muita RAM. São alvos SÓ no modo agressivo manual.
+     * Nota: Prime Video (firebat/avod) fica fixado pela Home da Amazon em adj=700 e um app sem root
+     * NÃO consegue encerrá-lo; permanece aqui para quando houver root. Netflix e os demais apps de
+     * streaming que o usuário usa saem daqui de propósito: encerrá-los só forçava um "cold start" lento
+     * na reabertura — o oposto do que o usuário quer.
+     */
     val DEFAULT_HOGS = setOf(
-        "com.amazon.firebat",   // Prime Video
+        "com.amazon.firebat",   // Prime Video (só cai com root)
         "com.amazon.avod",      // Prime Video (legado)
-        "com.netflix.ninja",    // Netflix
     )
 
-    /** Nunca encerrar: áudio em 2º plano e o próprio launcher. */
+    /**
+     * Nunca encerrar — mantidos "quentes" para reabrir rápido: áudio em 2º plano, o próprio launcher
+     * e os apps de streaming que o usuário realmente usa.
+     */
     val NEVER = setOf(
         "com.spotify.tv.android",
         "com.spotify.music",
         "com.amazon.mp3",
+        "com.netflix.ninja",          // Netflix
+        "com.disney.disneyplus",      // Disney+
+        "com.hbo.hbonow",             // HBO Max (legado)
+        "com.wbd.stream",             // HBO Max / Max
+        "com.globo.globotv",          // Globoplay
+        "com.amazon.firetv.youtube",  // YouTube
+        "com.google.android.youtube.tv",
     )
 
     /** Prefixos de sistema protegidos (não encerrar nem no modo agressivo). */
