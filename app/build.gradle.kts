@@ -15,12 +15,24 @@ android {
         versionName = "0.2.0"
     }
 
+    // Optional owner-controlled release signing; credentials never belong in Git.
+    val releaseStore = providers.environmentVariable("TVLIGHT_KEYSTORE").orNull
+    if (releaseStore != null) {
+        signingConfigs.create("ownerRelease") {
+            storeFile = file(releaseStore)
+            storePassword = providers.environmentVariable("TVLIGHT_STORE_PASSWORD").get()
+            keyAlias = providers.environmentVariable("TVLIGHT_KEY_ALIAS").get()
+            keyPassword = providers.environmentVariable("TVLIGHT_KEY_PASSWORD").get()
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            // Artefato sem assinatura; assinatura explícita após validação local.
+            if (releaseStore != null) signingConfig = signingConfigs.getByName("ownerRelease")
+            // Without explicit credentials, release stays unsigned.
         }
     }
 

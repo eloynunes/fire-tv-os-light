@@ -9,8 +9,12 @@
 - Short device checks do not validate all streaming services, DRM, physical remote timing, long-term memory behavior or every lifecycle sequence.
 - APK rollback can be rejected by Android's downgrade/signature rules; backup APKs alone do not preserve private data.
 - UI strings and historical developer notes are currently Portuguese. The public overview and security policy are English; full UI localization is not yet implemented.
-- Build output is unsigned. Existing helper scripts may assume an already-signed APK and a particular macOS SDK layout; follow README build/sign instructions instead of treating those scripts as portable installers.
+- Build output is unsigned. Installation now requires a pre-signed TV Light APK, verifies signature integrity and package identity, and stops on errors. SDK discovery still defaults to a macOS Homebrew layout; set environment paths on other systems.
 
 ## Fixed in 0.2.0
 
 Settings are no longer classified as Home merely because they share Amazon's package. The Settings button uses Amazon's actual main-settings entry point instead of the generic action routed to a CTS handler. Pending Home/app launches and delayed curtain callbacks are cancelled at lifecycle boundaries. Automatic privileged actions were removed and automatic cleanup now defaults to off.
+
+## Repository hardening after 0.2.0
+
+Accessibility updates preserve other services and include readback verification. Install no longer masks ADB failures or re-enables accessibility blindly; it rejects unsigned APKs and other package names. Device selection is explicit. Restore no longer uninstalls or resets unrelated settings. Release signing supports owner-provided environment credentials without embedding keys. These tooling/build changes do not replace the installed app certificate or claim to eliminate the Home flash.

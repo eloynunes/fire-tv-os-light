@@ -23,7 +23,11 @@ Requires JDK 17 and Android SDK 34. Set `sdk.dir` in your untracked `local.prope
 ./gradlew testDebugUnitTest lintRelease assembleRelease
 ```
 
-Release builds are unsigned by default. Sign your APK with a key you own and keep it secure. Android updates require a compatible signing certificate. Do not uninstall to bypass a certificate mismatch if you need to preserve app data.
+Release builds are unsigned by default. For owner-controlled signing, set all four environment variables: `TVLIGHT_KEYSTORE` (absolute path), `TVLIGHT_STORE_PASSWORD`, `TVLIGHT_KEY_ALIAS`, and `TVLIGHT_KEY_PASSWORD`. Never commit these values or a keystore. If configured incompletely, the build fails instead of choosing a fallback key.
+
+Developer scripts now require an explicit `DEVICE` ADB serial or IP:port. `APK=/absolute/signed.apk DEVICE=serial ./scripts/install.sh` verifies the APK signature and package name, then requests an update without automatic uninstall or accessibility changes. Set `APKSIGNER`/`AAPT` if build-tools are not discovered. `home-lock.sh on|off` preserves unrelated accessibility services. `restore-original.sh` now only disables TV Light redirection; it does not reset unrelated settings or uninstall the app. Uninstall remains explicit and destroys app data.
+
+ Sign your APK with a key you own and keep it secure. Android updates require a compatible signing certificate. Do not uninstall to bypass a certificate mismatch if you need to preserve app data.
 
 The privately tested APK used the existing local Android debug certificate for update compatibility. That certificate is not a production identity; no private signing key is distributed here.
 

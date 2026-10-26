@@ -1,12 +1,26 @@
 #!/usr/bin/env bash
-# Instala (ou --uninstall) o launcher. Desinstalar restaura 100% a experiência original.
-set -uo pipefail
+# Install a pre-signed APK; never uninstall to bypass an update failure.
+set -euo pipefail
 source "$(dirname "$0")/env.sh"
-if [[ "${1:-}" == "--uninstall" ]]; then adbd uninstall "$PKG"; exit $?; fi
-[[ -f "$APK" ]] || (cd "$ROOT" && ./gradlew -q assembleRelease) || exit 1
-# Lembra se a trava do Home estava ativa: reinstalar desliga o serviço de acessibilidade.
-WAS_ON=$(adbd shell settings get secure enabled_accessibility_services 2>/dev/null | tr -d '\r' | grep -c "$PKG")
-adbd install -r "$APK" | tail -1
-if [ "${WAS_ON:-0}" -ge 1 ]; then
-  "$(dirname "$0")/home-lock.sh" on >/dev/null && echo "trava do Home religada"
+: "${DEVICE:?Set DEVICE to your authorized ADB serial or IP:port}"
+if [[ "${1:-}" == "--uninstall" ]]; then
+  "$(dirname "$0")/home-lock.sh" off
+  adbd uninstall "$PKG"
+  exit 0
 fi
+[[ -z "${1:-}" ]] || { echo "Usage: APK=/absolute/signed.apk DEVICE=serial $0 [--uninstall]" >&2; exit 2; }
+[[ -f "$APK" ]] || { echo "Set APK to a pre-signed APK; unsigned releases are not installed automatically." >&2; exit 2; }
+if [[ -z "${APKSIGNER:-}" ]]; then
+  for candidate in "$ANDROID_HOME"/build-tools/*/apksigner; do
+    [[ ! -x "$candidate" ]] || APKSIGNER="$candidate"
+  done
+fi
+: "${APKSIGNER:?Set APKSIGNER to Android build-tools apksigner}"
+"$APKSIGNER" verify "$APK"
+AAPT="${AAPT:-$(dirname "$APKSIGNER")/aapt}"
+badging=$("$AAPT" dump badging "$APK")
+package_line=${badging%%$'\n'*}
+[[ "$package_line" == "package: name='$PKG' "* ]] || { echo "APK is not TV Light; refusing installation." >&2; exit 2; }
+# Android enforces signatures/version compatibility. On failure, stop immediately.
+adbd install -r "$APK"
+echo "Update accepted. Check accessibility manually; no service list was overwritten."

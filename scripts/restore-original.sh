@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Volta o Fire TV ao estado original: desliga a trava da Home, restaura animações (1.0) e desinstala o TV Light.
-source "$(dirname "$0")/env.sh"
+# Disable redirection only; external device tuning has separate rollback.
+set -euo pipefail
+case "${1:-}" in
+  ""|--keep-app) ;;
+  *) echo "Usage: $0 [--keep-app]. Use install.sh --uninstall explicitly to remove app data." >&2; exit 2 ;;
+esac
 "$(dirname "$0")/home-lock.sh" off
-"$(dirname "$0")/background-limits.sh" revert >/dev/null
-for k in window_animation_scale transition_animation_scale; do adbd shell settings put global $k 1.0; done
-adbd shell settings delete global animator_duration_scale >/dev/null
-[[ "${1:-}" == "--keep-app" ]] || adbd uninstall "$PKG"
-echo "Restaurado."
+echo "TV Light redirection disabled. App and external settings preserved."

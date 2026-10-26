@@ -5,8 +5,9 @@ export PATH="$JAVA_HOME/bin:/opt/homebrew/bin:$PATH"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 RESULTS="$ROOT/testing/results"
 PKG="com.firetvoslight.launcher"
-DEVICE="${DEVICE:-192.0.2.1:5555}"
-APK="$ROOT/app/build/outputs/apk/release/app-release.apk"
+DEVICE="${DEVICE:-}"
+APK="${APK:-$ROOT/app/build/outputs/apk/release/app-release.apk}"
 mkdir -p "$RESULTS"
+ADB="${ADB:-adb}"
 TS="$(date +%Y%m%d-%H%M%S)"
-adbd() { adb -s "$DEVICE" "$@"; }
+adbd() { : "${DEVICE:?Set DEVICE to your authorized ADB serial or IP:port}"; "$ADB" -s "$DEVICE" "$@"; }
