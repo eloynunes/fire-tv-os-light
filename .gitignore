@@ -15,3 +15,10 @@ __pycache__/
 *.key
 .env
 .env.*
+
+*.log
+*.ab
+*.bundle
+*.pcap
+*.pcapng
+*.logcat

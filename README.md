@@ -15,6 +15,10 @@ Device-tested on Fire TV `sheldon` / `AFTSS`, Fire OS 7.7.1.7 (`PS7717.5741N`, i
 - No `su` probing, kernel exploit, network permission or privileged backend is included in the app.
 - Security review is limited: this project is not a certified secure product. Read [SECURITY.md](SECURITY.md) and [known issues](docs/KNOWN-ISSUES.md).
 
+## Help solve the remaining problems
+
+**Still unresolved:** completely eliminating the Amazon Home flash and safely terminating idle Prime Video automatically. Neither is promised by version 0.2.0. See [open problems and acceptance criteria](docs/OPEN-PROBLEMS.md), [development history and results](docs/PROJECT-HISTORY.md), and [privacy guidance](docs/PRIVACY.md). Contributions should start with reproducible, sanitized evidence rather than root or system-component removal.
+
 ## Build
 
 Requires JDK 17 and Android SDK 34. Set `sdk.dir` in your untracked `local.properties` or configure your Android SDK environment.
@@ -27,7 +31,7 @@ Release builds are unsigned by default. For owner-controlled signing, set all fo
 
 Developer scripts now require an explicit `DEVICE` ADB serial or IP:port. `APK=/absolute/signed.apk DEVICE=serial ./scripts/install.sh` verifies the APK signature and package name, then requests an update without automatic uninstall or accessibility changes. Set `APKSIGNER`/`AAPT` if build-tools are not discovered. `home-lock.sh on|off` preserves unrelated accessibility services. `restore-original.sh` now only disables TV Light redirection; it does not reset unrelated settings or uninstall the app. Uninstall remains explicit and destroys app data.
 
- Sign your APK with a key you own and keep it secure. Android updates require a compatible signing certificate. Do not uninstall to bypass a certificate mismatch if you need to preserve app data.
+Sign your APK with a key you own and keep it secure. Android updates require a compatible signing certificate. Do not uninstall to bypass a certificate mismatch if you need to preserve app data.
 
 The privately tested APK used the existing local Android debug certificate for update compatibility. That certificate is not a production identity; no private signing key is distributed here.
 
@@ -48,6 +52,10 @@ The 0.2.0 build passed 42 JVM tests and release lint with zero errors and 20 doc
 - `app/`: Android app and JVM tests.
 - `scripts/`: optional developer/device utilities; some legacy tools change device settings or create computer agents. Do not run them as a setup checklist.
 - `docs/KNOWN-ISSUES.md`: current limitations and risks.
+- `docs/OPEN-PROBLEMS.md`: the two unresolved goals and validation criteria.
+- `docs/PROJECT-HISTORY.md`: implementation decisions, failed approaches and actual results.
+- `docs/PRIVACY.md`: redaction and rewritten-history guidance.
+- `.github/ISSUE_TEMPLATE/`: bug-report and research-proposal templates.
 - Other Portuguese documents under `docs/`: historical development notes, not current installation instructions. Security-sensitive claims are superseded by this README and SECURITY.md.
 
 ## Contributing and licensing

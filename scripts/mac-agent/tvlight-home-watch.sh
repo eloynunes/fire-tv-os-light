@@ -7,7 +7,7 @@ fi
 # Vigia contínuo (launchd KeepAlive): quando o Fire TV abre a Home da Amazon (botão Home),
 # o Mac manda abrir o TV Light pelo ADB — comandos do ADB não sofrem a espera de ~5 s do Android.
 ADB=/opt/homebrew/bin/adb
-HOST=192.0.2.1; DEV="$HOST:5555"; ACT=com.firetvoslight.launcher/.MainActivity
+HOST="${TVLIGHT_DEVICE_HOST:?Set TVLIGHT_DEVICE_HOST explicitly; no default device is selected}"; DEV="$HOST:5555"; ACT=com.firetvoslight.launcher/.MainActivity
 LOG="$HOME/Library/Logs/tvlight-home-watch.log"
 while true; do
   if nc -z -G 2 "$HOST" 5555 2>/dev/null; then

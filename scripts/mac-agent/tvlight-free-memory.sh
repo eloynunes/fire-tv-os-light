@@ -7,7 +7,7 @@ fi
 # Roda via launchd a cada 2 min. Uma vez por boot do Fire TV (90 s após ligar), encerra Prime Video/Netflix
 # que a Amazon abre sozinha em segundo plano. Não mexe no app que estiver na tela. Silencioso se a TV não estiver acessível.
 ADB=/opt/homebrew/bin/adb
-HOST=192.0.2.1; DEV="$HOST:5555"
+HOST="${TVLIGHT_DEVICE_HOST:?Set TVLIGHT_DEVICE_HOST explicitly; no default device is selected}"; DEV="$HOST:5555"
 DIR="$HOME/Library/Application Support/TVLight"; STATE="$DIR/last_boot"; LOG="$HOME/Library/Logs/tvlight-free-memory.log"
 mkdir -p "$DIR"
 nc -z -G 2 "$HOST" 5555 2>/dev/null || exit 0
