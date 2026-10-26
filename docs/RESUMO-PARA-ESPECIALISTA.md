@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Resumo para o especialista — root de Fire TV Stick HD (sheldon) + projeto TV Light
 
 Oi! Este resumo é pra te ajudar a validar **compatibilidade** e **segurança** antes/durante o root do
@@ -55,12 +57,14 @@ exatos do aparelho (lidos por ADB), o que já fiz sem root, o que está em abert
 
 ## 5. O que o meu app (TV Light) já faz quando houver root — para você revisar a segurança
 
-Tudo fica **dormente sem `su`** (detecção falha → no-op). Com `su`:
-- `am force-stop com.amazon.firebat` ao voltar ao launcher (liberar RAM).
-- tenta `cmd package set-home-activity` (best-effort; cortina continua como fallback).
-- status de root exibido em Ajustes → Memória.
-- **Sem exploit embutido, sem ADB embutido, sem porta aberta.** O app só usa um `su` que já exista.
-- Desinstalar o app remove tudo; o root é gerenciado por você no Magisk.
+Após uma **revisão de segurança**, a execução de comandos privilegiados foi **retirada desta versão**:
+- O app **não roda `su`**, não encerra o Prime por root e não altera a Home por root.
+- O redirecionamento de Home é só por **acessibilidade** (cortina), sem privilégios.
+- A limpeza de RAM usa apenas `killBackgroundProcesses` (sem root) e está **desligada por padrão**.
+- **Sem exploit, sem ADB embutido, sem porta aberta, sem execução de shell como root dentro do app.**
+- A integração com root (encerrar Prime / fixar Home) fica para um **backend tipado, revisado e testado**
+  — não exposição de shell arbitrária. Por isso a pergunta 4 abaixo é a mais importante pra você.
+- Desinstalar o app remove tudo; o root (quando existir) é gerenciado por você no Magisk.
 
 ## 6. Perguntas diretas (compatibilidade + segurança)
 

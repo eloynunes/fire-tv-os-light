@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Decisões
 - Kotlin + Views do framework, **sem AndroidX**: APK release 45 KB, abertura mais leve.
 - Layout montado em código (sem inflar XML); GridLayout + HorizontalScrollView; foco nativo do D-pad.

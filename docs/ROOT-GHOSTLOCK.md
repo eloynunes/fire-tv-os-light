@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Preparado para root (GhostLock) — o que o TV Light faz quando você rootear
 
 Este documento explica o que já está **pronto no app** para aproveitar o root, e o que **você**
@@ -25,32 +27,22 @@ qualquer passo.
    (apaga tudo).** Leia os avisos com calma.
 2. Ao final, você deve ter o **Magisk** instalado (gerenciador de root).
 
-## O que o TV Light JÁ FAZ sozinho quando há root
+## Estado atual do app (após revisão de segurança)
 
-Nada disso liga sem root — é tudo dormente até existir um `su`:
+Numa revisão de segurança, a **execução de comandos privilegiados foi retirada desta versão**: o app
+**não** roda `su`, não encerra o Prime por root e não altera a Home por root. Em Ajustes → Memória, a
+linha "Integração privilegiada" aparece como **Indisponível nesta versão**. O redirecionamento de Home
+por **acessibilidade** (cortina) permanece como alternativa, sem privilégios.
 
-- **Encerra o Prime Video de verdade.** Sem root, o Prime (`com.amazon.firebat`) fica fixado pela Home
-  da Amazon em `adj=700` e não dá para encerrá-lo; ele come ~185 MB e deixa tudo mais lento. Com root,
-  o launcher roda `am force-stop` nele ao voltar para a tela inicial, liberando RAM → apps abrem mais
-  rápido. (Veja `MemoryManager` + `MemoryPolicy`.)
-- **Tenta fixar o TV Light como Home de verdade** pelo caminho padrão do Android
-  (`cmd package set-home-activity`), em `HomeRedirectService.onServiceConnected()`. Se o Fire OS ainda
-  ignorar mesmo com root, a **cortina** continua cobrindo o Home da Amazon (nada piora).
-  > O método **definitivo** de trava de Home nesta build deve ser confirmado no guia do GhostLock; o app
-  > usa o caminho padrão e não embute nenhum passo de exploit.
-- **Mostra o status do root** em Ajustes → Memória ("Root (GhostLock)"): *Verificando… → Disponível /
-  Não detectado*.
+A integração com root (encerrar o Prime, fixar a Home) fica para um **backend tipado, revisado e
+testado** — em vez de expor execução de shell arbitrária como root dentro do app. Quando isso existir,
+este documento será atualizado com o passo de concessão no Magisk e a verificação.
 
-## Como conceder e verificar o root
+## Verificar root pelo computador (independe do app)
 
-1. Abra o TV Light → **Ajustes → Memória**. Na primeira vez que ele tocar no `su`, o **Magisk** vai
-   pedir permissão — **conceda** para `com.firetvoslight.launcher` (marque "lembrar").
-2. A linha "Root (GhostLock)" deve virar **Disponível**.
-3. Pelo computador, dá para checar direto:
-
-   ```bash
-   ./scripts/root-status.sh
-   ```
+```bash
+./scripts/root-status.sh
+```
 
 ## Reversível
 

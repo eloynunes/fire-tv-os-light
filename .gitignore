@@ -5,3 +5,13 @@ testing/results/
 *.apk
 .DS_Store
 scripts/mac-agent/*.log
+
+__pycache__/
+*.py[cod]
+*.keystore
+*.jks
+*.idsig
+*.pem
+*.key
+.env
+.env.*

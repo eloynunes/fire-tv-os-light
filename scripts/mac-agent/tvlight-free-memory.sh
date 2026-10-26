@@ -1,4 +1,9 @@
 #!/bin/bash
+# Legacy utility: not validated for unattended use or playback safety.
+if [ "${TVLIGHT_ENABLE_LEGACY_TOOLS:-}" != "1" ]; then
+  echo "Disabled legacy utility. Read SECURITY.md before explicitly enabling TVLIGHT_ENABLE_LEGACY_TOOLS=1." >&2
+  exit 2
+fi
 # Roda via launchd a cada 2 min. Uma vez por boot do Fire TV (90 s após ligar), encerra Prime Video/Netflix
 # que a Amazon abre sozinha em segundo plano. Não mexe no app que estiver na tela. Silencioso se a TV não estiver acessível.
 ADB=/opt/homebrew/bin/adb

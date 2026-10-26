@@ -72,10 +72,10 @@ class PrefsStore(ctx: Context) {
     fun loadApps(): List<AppEntry> = PrefsCodec.decodeApps(sp.getString(APPS, null))
     fun saveApps(apps: List<AppEntry>) = sp.edit().putString(APPS, PrefsCodec.encodeApps(apps)).apply()
 
-    /** Limpeza automática de RAM ao voltar ao launcher (ligada por padrão). */
+    /** Solicitações de limpeza sem root; desativadas por padrão nesta revisão. */
     var autoFree: Boolean
-        get() = sp.getBoolean(AUTO_FREE, true)
-        set(v) = sp.edit().putBoolean(AUTO_FREE, v).apply()
+        get() = sp.getBoolean("review_auto_free_v1", false)
+        set(v) = sp.edit().putBoolean("review_auto_free_v1", v).apply()
 
     /** Modo agressivo: encerra todos os apps de 2º plano, não só Prime/Netflix (Spotify sempre preservado). */
     var aggressiveFree: Boolean

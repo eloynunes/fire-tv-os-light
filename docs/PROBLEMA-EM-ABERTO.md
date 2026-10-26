@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Problema em aberto — para revisão de um colaborador
 
 ## Resumo em uma frase

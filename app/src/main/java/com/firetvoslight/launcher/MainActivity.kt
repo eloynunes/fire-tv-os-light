@@ -42,6 +42,10 @@ class MainActivity : Activity(), LauncherScreen.Host {
         }
     }
 
+    private val initialSweep = Runnable {
+        if (resumed && repo.store.autoFree) memory.sweep(repo.store.aggressiveFree)
+    }
+
     private val timeReceiver = object : BroadcastReceiver() {
         override fun onReceive(c: Context?, i: Intent?) = screen.updateClock()
     }
@@ -75,13 +79,14 @@ class MainActivity : Activity(), LauncherScreen.Host {
         repo.reload()
         resumed = true
         // Libera a RAM logo após desenhar (não compete com o primeiro render).
-        if (repo.store.autoFree) main.postDelayed({ memory.sweep(repo.store.aggressiveFree) }, 350)
+        if (repo.store.autoFree) main.postDelayed(initialSweep, 350)
         main.postDelayed(periodicSweep, SWEEP_INTERVAL_MS)
     }
 
     override fun onPause() {
         super.onPause()
         resumed = false
+        main.removeCallbacks(initialSweep)
         main.removeCallbacks(periodicSweep)
         screen.finishMove()
         repo.lastFocus = screen.focusedTag()
@@ -89,6 +94,7 @@ class MainActivity : Activity(), LauncherScreen.Host {
     }
 
     override fun onDestroy() {
+        main.removeCallbacksAndMessages(null)
         repo.removeListener(screen)
         super.onDestroy()
     }

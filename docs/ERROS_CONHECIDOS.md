@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Erros conhecidos
 - `HashMap.putIfAbsent` exige API 24 (lint NewApi, minSdk 22) → substituído. 
 - Fire Stick sem resposta em 192.0.2.1 (ping/5555) em 24/10/2026: aparelho dormindo, IP mudou ou ADB desligado.

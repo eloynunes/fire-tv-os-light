@@ -163,8 +163,9 @@ class SettingsActivity : Activity() {
             val before = memory.availableMb()
             val n = memory.sweep(repo.store.aggressiveFree)
             main.postDelayed({
-                r.setValue("${memory.availableMb()} MB")
-                Toast.makeText(this, getString(R.string.freed, n, maxOf(0, memory.availableMb() - before)), Toast.LENGTH_SHORT).show()
+                val after = memory.availableMb()
+                r.setValue("$after MB")
+                Toast.makeText(this, getString(R.string.freed, n, after - before), Toast.LENGTH_SHORT).show()
             }, 700)
         }
         add(list, freeRow)
@@ -174,10 +175,9 @@ class SettingsActivity : Activity() {
         add(list, toggle(getString(R.string.set_aggressive), getString(R.string.set_aggressive_sub), repo.store.aggressiveFree) {
             repo.store.aggressiveFree = it
         })
-        // Status do root (GhostLock/Magisk): informativo. Com root, o Prime Video é encerrado de verdade.
-        val rootRow = row(getString(R.string.set_root), value = getString(R.string.set_root_checking), subtitle = getString(R.string.set_root_sub)) { }
+        // Disponibilidade da integração nesta versão; não consulta su no aparelho.
+        val rootRow = row(getString(R.string.set_root), value = getString(R.string.set_root_off), subtitle = getString(R.string.set_root_sub)) { }
         add(list, rootRow)
-        RootShell.check { ok -> main.post { rootRow.setValue(getString(if (ok) R.string.set_root_on else R.string.set_root_off)) } }
     }
 
     private fun appsPanel() = Panel(getString(R.string.set_apps)) { list ->
@@ -268,11 +268,24 @@ class SettingsActivity : Activity() {
     }
 
     private fun openSafely(i: Intent) {
-        try {
-            startActivity(i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        } catch (_: Throwable) {
-            Toast.makeText(this, R.string.open_failed, Toast.LENGTH_SHORT).show()
+        // Fire OS routes ACTION_SETTINGS through a CTS dummy that returns Home.
+        // Prefer the actual Amazon settings screen; keep Android fallback for other systems.
+        val candidates = if (i.action == Settings.ACTION_SETTINGS) listOf(
+            Intent("amazon.intent.action.MAINSETTINGS").setPackage(HomeRedirectService.AMAZON_HOME),
+            Intent().setClassName(HomeRedirectService.AMAZON_HOME, "com.amazon.tv.launcher.ui.MainSettingsActivity"),
+            i,
+        ) else listOf(i)
+        for (candidate in candidates) {
+            try {
+                startActivity(candidate.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                return
+            } catch (_: android.content.ActivityNotFoundException) {
+                // Try the next supported entry point.
+            } catch (_: SecurityException) {
+                // A protected entry point is not bypassed.
+            }
         }
+        Toast.makeText(this, R.string.open_failed, Toast.LENGTH_SHORT).show()
     }
 
     private companion object {

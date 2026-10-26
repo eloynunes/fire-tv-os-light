@@ -21,6 +21,7 @@ import android.view.accessibility.AccessibilityEvent
 import android.widget.FrameLayout
 import android.widget.TextView
 import com.firetvoslight.launcher.core.AppEntry
+import com.firetvoslight.launcher.core.HomeRedirectPolicy
 import com.firetvoslight.launcher.core.KeyAction
 import com.firetvoslight.launcher.core.KeyMap
 import com.firetvoslight.launcher.core.Section
@@ -39,44 +40,70 @@ class HomeRedirectService : AccessibilityService(), LauncherScreen.Host {
     private var notice: TextView? = null
     private var shown = false
     private var launchingPkg: String? = null
-    private val dropCurtain = Runnable { hideCurtain() }
+    private var pendingAppIntent: Intent? = null
+    private val dropCurtain = Runnable {
+        cancelAlarm(this, Intent(this, MainActivity::class.java), REQ_LAUNCHER)
+        cancelPendingApp()
+        hideCurtain()
+    }
+
+    private fun cancelPendingApp() {
+        pendingAppIntent?.let { cancelAlarm(this, it, REQ_APP) }
+        pendingAppIntent = null
+    }
 
     override fun onServiceConnected() {
         instance = this
         LauncherRepo.init(this)
         LauncherRepo.store.homeLockDesired = true
-        // Com root (ex.: após GhostLock/Magisk): tenta fixar o TV Light como Home de verdade, pelo caminho
-        // padrão do Android. Se o Fire OS ainda ignorar, a cortina abaixo continua cobrindo o Home da Amazon.
-        // Dormente sem root. O método definitivo de trava de Home deve ser confirmado com o guia do GhostLock.
-        val pkg = packageName
-        RootShell.run("cmd package set-home-activity $pkg/$pkg.MainActivity")
+        // A conexão do serviço não altera preferências de Home por root.
+        // O redirecionamento por acessibilidade abaixo permanece como alternativa.
         // Monta a cortina com antecedência para o primeiro Home já ser instantâneo.
-        main.postDelayed({ ensureCurtain() }, 2000)
+        main.postDelayed({ if (instance === this) ensureCurtain() }, 2000)
     }
 
     override fun onDestroy() {
+        main.removeCallbacksAndMessages(null)
+        cancelAlarm(this, Intent(this, MainActivity::class.java), REQ_LAUNCHER)
+        cancelPendingApp()
         hideCurtain()
         screen?.let { LauncherRepo.removeListener(it) }
+        screen = null
+        curtain = null
+        notice = null
         if (instance === this) instance = null
         super.onDestroy()
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
-        val pkg = event.packageName?.toString() ?: return
-        when {
-            pkg == AMAZON_HOME -> if (!bypass && launchingPkg == null) {
+        when (HomeRedirectPolicy.decide(event.packageName?.toString(), packageName, bypass, launchingPkg, event.className?.toString())) {
+            HomeRedirectPolicy.Action.REDIRECT -> {
                 showCurtain()
                 openViaAlarm(Intent(this, MainActivity::class.java), REQ_LAUNCHER)
             }
             // O app escolhido na cortina abriu: a cortina já pode sair.
-            pkg == launchingPkg -> hideCurtain()
+            HomeRedirectPolicy.Action.DISMISS -> {
+                cancelAlarm(this, Intent(this, MainActivity::class.java), REQ_LAUNCHER)
+                cancelPendingApp()
+                hideCurtain()
+            }
             // Saiu da Home da Amazon para outro app: o desvio pedido pelo usuário termina.
-            pkg != packageName && pkg != SYSTEM_UI && pkg != "android" -> bypass = false
+            HomeRedirectPolicy.Action.LEAVE -> {
+                cancelAlarm(this, Intent(this, MainActivity::class.java), REQ_LAUNCHER)
+                cancelPendingApp()
+                hideCurtain()
+                if (event.packageName?.toString() != AMAZON_HOME) bypass = false
+            }
+            HomeRedirectPolicy.Action.IGNORE -> Unit
         }
     }
 
-    override fun onInterrupt() {}
+    override fun onInterrupt() {
+        cancelAlarm(this, Intent(this, MainActivity::class.java), REQ_LAUNCHER)
+        cancelPendingApp()
+        hideCurtain()
+    }
 
     // ---------- cortina ----------
 
@@ -161,6 +188,8 @@ class HomeRedirectService : AccessibilityService(), LauncherScreen.Host {
         }
         val i = Intent(Intent.ACTION_MAIN).setComponent(ComponentName(e.packageName, e.activityName))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)
+        cancelPendingApp()
+        pendingAppIntent = i
         openViaAlarm(i, REQ_APP)
         main.removeCallbacks(dropCurtain)
         main.postDelayed(dropCurtain, CURTAIN_MAX_MS)
@@ -183,6 +212,7 @@ class HomeRedirectService : AccessibilityService(), LauncherScreen.Host {
                 .setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), pi)
         } catch (t: Throwable) {
             Log.w(TAG, "redirect failed", t)
+            cancelPendingApp()
             hideCurtain()
         }
     }
@@ -190,7 +220,6 @@ class HomeRedirectService : AccessibilityService(), LauncherScreen.Host {
     companion object {
         private const val TAG = "TVLight"
         const val AMAZON_HOME = "com.amazon.tv.launcher"
-        private const val SYSTEM_UI = "com.android.systemui"
         private const val CURTAIN_MAX_MS = 10_000L
         private const val REQ_LAUNCHER = 0
         private const val REQ_APP = 1
@@ -220,7 +249,8 @@ class HomeRedirectService : AccessibilityService(), LauncherScreen.Host {
             if (!s.shown || s.launchingPkg != null) return null
             val tag = s.screen?.focusedTag()
             // Pequeno atraso: a Activity desenha primeiro, então a troca não pisca.
-            s.main.postDelayed({ s.hideCurtain() }, 120)
+            s.main.removeCallbacks(s.dropCurtain)
+            s.main.postDelayed(s.dropCurtain, 120)
             return tag
         }
     }

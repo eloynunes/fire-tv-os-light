@@ -11,8 +11,8 @@ android {
         applicationId = "com.firetvoslight.launcher"
         minSdk = 22
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 4
+        versionName = "0.2.0"
     }
 
     buildTypes {
@@ -20,8 +20,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-            // Assinado com a chave debug local: permite instalar/desinstalar via ADB sem keystore extra.
-            signingConfig = signingConfigs.getByName("debug")
+            // Artefato sem assinatura; assinatura explícita após validação local.
         }
     }
 
@@ -33,7 +32,7 @@ android {
 
     lint {
         abortOnError = true
-        checkReleaseBuilds = false
+        checkReleaseBuilds = true
         xmlReport = true
         htmlReport = false
     }

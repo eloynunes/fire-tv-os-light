@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Progresso
 - [x] Mac: arm64, macOS 26.6.2; JDK17, Gradle, SDK 34, ADB via Homebrew.
 - [x] ADB: só funciona com o Mac no CABO (UniFi isola clientes Wi-Fi). Chave autorizada na TV.

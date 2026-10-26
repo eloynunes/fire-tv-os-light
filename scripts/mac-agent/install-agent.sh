@@ -1,4 +1,9 @@
 #!/bin/bash
+# Legacy utility: not validated for unattended use or playback safety.
+if [ "${1:-}" != "--uninstall" ] && [ "${TVLIGHT_ENABLE_LEGACY_TOOLS:-}" != "1" ]; then
+  echo "Disabled legacy utility. Read SECURITY.md before explicitly enabling TVLIGHT_ENABLE_LEGACY_TOOLS=1." >&2
+  exit 2
+fi
 # Instala (ou --uninstall) o agente do Mac que limpa a memória do Fire TV a cada boot.
 LABEL=com.firetvoslight.freememory; LABEL2=com.firetvoslight.homewatch
 DIR="$HOME/Library/Application Support/TVLight"; PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"; PLIST2="$HOME/Library/LaunchAgents/$LABEL2.plist"

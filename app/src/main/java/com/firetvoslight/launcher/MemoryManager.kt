@@ -7,9 +7,8 @@ import android.util.Log
 import com.firetvoslight.launcher.core.MemoryPolicy
 
 /**
- * Libera RAM encerrando processos em segundo plano dos apps que a Amazon mantém vivos (Prime, Netflix).
- * Usa ActivityManager.killBackgroundProcesses (permissão KILL_BACKGROUND_PROCESSES, sem root): só encerra
- * processos em 2º plano — nunca o app em uso, nunca o sistema. Reversível (desinstalar remove tudo).
+ * Solicita ao Android encerramento de processos elegíveis em segundo plano, sem root.
+ * Uma chamada aceita não comprova encerramento nem ganho de memória.
  */
 class MemoryManager(private val ctx: Context) {
     private val am = ctx.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -40,11 +39,8 @@ class MemoryManager(private val ctx: Context) {
                 Log.w("TVLight", "kill $p", t)
             }
         }
-        // Com root (ex.: após GhostLock/Magisk): o Prime Video fica fixado em adj=700 e killBackgroundProcesses
-        // não o alcança. Um "am force-stop" como root encerra de verdade e libera ~185 MB. Dormente sem root.
-        val rootKill = kill.filter { it in MemoryPolicy.DEFAULT_HOGS }
-        if (rootKill.isNotEmpty()) RootShell.run(*rootKill.map { "am force-stop $it" }.toTypedArray())
-        if (n > 0) Log.i("TVLight", "mem sweep: encerrados=$n [${kill.joinToString(",")}] aggressive=$aggressive")
+        // Sem force-stop privilegiado automático; a via ADB externa é separada.
+        if (n > 0) Log.i("TVLight", "mem sweep: solicitados=$n [${kill.joinToString(",")}] aggressive=$aggressive")
         return n
     }
 

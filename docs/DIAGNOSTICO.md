@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Diagnóstico real (ADB, 24/10/2026)
 - Modelo: AFTSS (sheldon) | Fabricante: Amazon
 - Fire OS: Fire OS 7.7.1.7 (PS7717/5741) | build 0036408028548 | Android 9 / API 28

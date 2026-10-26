@@ -1,3 +1,5 @@
+> **Historical document — not current operational guidance.** See [README](../README.md), [SECURITY](../SECURITY.md) and [current known issues](KNOWN-ISSUES.md). Root/Magisk, compatibility, performance and automatic-rollback claims below may be obsolete or unverified.
+
 # Compatibilidade Fire OS 7.7.1.7 (PS7717/5741)
 Fontes: AFTVnews, XDA, Tom's Guide (relatos da comunidade; nada oficial da Amazon).
 - Amazon bloqueia launchers personalizados como Home desde PS7273 (2020). Relatos indicam builds ≥ PS7706 corrigidos contra os truques de "hijack" (acessibilidade/logcat). PS7717 é posterior → **substituir a Home: tratado como inviável** sem root (fora de escopo).
